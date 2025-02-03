@@ -32,7 +32,7 @@ namespace TestApp.Managers
         private readonly Dictionary<string, float> _playingSoundsEndTime = new();
 
         private bool IsSoundOff => !_isSoundOn.Value;
-        private string GetSoundPath(string soundClip) => $"Sound/Effects/{soundClip}";
+        private string GetSoundPath(string soundClip) => $"Sounds/{soundClip}";
 
         private void Awake()
         {

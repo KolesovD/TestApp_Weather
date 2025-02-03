@@ -1,5 +1,14 @@
 {
   "dependencies": {
+    "com.littlebigfun.addressable-importer": {
+      "version": "https://github.com/favoyang/unity-addressable-importer.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.addressables": "1.1.5"
+      },
+      "hash": "f15c79e9d1b35309010afb88e7f376803af54390"
+    },
     "com.unity.2d.animation": {
       "version": "10.1.4",
       "depth": 1,
@@ -203,6 +212,13 @@
     "com.unity.nuget.mono-cecil": {
       "version": "1.11.4",
       "depth": 3,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.nuget.newtonsoft-json": {
+      "version": "3.2.1",
+      "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"

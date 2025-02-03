@@ -5,6 +5,7 @@ using System.Threading;
 using TestApp.Utils;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Networking;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace TestApp.Managers
@@ -140,6 +141,44 @@ namespace TestApp.Managers
                     Debug.LogError($"{TAG} Error catalog loading: {absoluteCatalogUrl}");
                     break;
             }
+        }
+
+        private Dictionary<string, object> _nowLoadingURL = new Dictionary<string, object>();
+        private Dictionary<string, object> _cacheURL = new Dictionary<string, object>();
+
+        public async UniTask<Texture2D> LoadURLImage(string url)
+        {
+            //Если уже грузится этот ресурс, то возвращаем его
+            if (_nowLoadingURL.ContainsKey(url) && _nowLoadingURL[url] is UniTask<Texture2D> cashedTask)
+                return await cashedTask;
+
+            //Пробуем взять из кэша
+            if (_cacheURL.ContainsKey(url))
+                return _cacheURL[url] as Texture2D;
+
+            UniTaskCompletionSource<Texture2D> loadingTask = new UniTaskCompletionSource<Texture2D>();
+            _nowLoadingURL[url] = loadingTask;
+
+            UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);
+            await request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+            {
+                loadingTask.TrySetResult(null);
+                _nowLoadingURL.Remove(url);
+
+                return null;
+            }
+
+            var content = DownloadHandlerTexture.GetContent(request);
+
+            if (content != null)
+                _cacheURL[url] = content;
+
+            loadingTask.TrySetResult(content);
+            _nowLoadingURL.Remove(url);
+
+            return content;
         }
     }
 }

@@ -1,6 +1,4 @@
-﻿using RotaryHeart.Lib.SerializableDictionary;
-using Sirenix.OdinInspector;
-using System;
+﻿using System;
 using TestApp.UI.Elements;
 using TestApp.UI.Pages;
 using UnityEngine;
@@ -34,20 +32,6 @@ namespace TestApp.UI
             }
 
             ShowPage(0);
-
-            /*IMenuPage firstPage = null;
-
-            foreach (var pair in _buttonsPageDictionary)
-            {
-                pair.Value.Hide(withEvent: false);
-                pair.Key.SetOnClick(() => ShowPage(pair.Value));
-
-                if (firstPage == null)
-                    firstPage = pair.Value;
-            }
-
-            if (firstPage != null)
-                ShowPage(firstPage);*/
         }
 
         private void ShowPage(int index)

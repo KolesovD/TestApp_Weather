@@ -1,9 +1,8 @@
-﻿using Network.Commands;
-using UnityEngine.Networking;
+﻿using UnityEngine.Networking;
 
-namespace TestApp.Network.Commands
+namespace TestApp.Network.Requests
 {
-    public class WeatherCommand : AbstractBaseCommand
+    public class WeatherRequest : AbstractBaseRequest
     {
         protected override void SetupRequest()
         {

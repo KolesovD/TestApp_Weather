@@ -6,8 +6,6 @@ using System.Linq;
 using System.Threading;
 using UniRx;
 using UnityEngine;
-using UnityEngine.Scripting;
-using Zenject;
 
 namespace TestApp.Managers
 {

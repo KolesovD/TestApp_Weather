@@ -1023,6 +1023,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _factsLoaderContainer: {fileID: 2754787627012366562}
   _factsDataContainer: {fileID: 2278848206325317053}
+  _factsScroll: {fileID: 1873525485899675678}
   _factsDataScrollContainer: {fileID: 8628066633300972483}
   _factButtonPrefab: {fileID: 2131082098223546595, guid: 50a21145d70f7d94aaf73d764b87da69, type: 3}
 --- !u!1 &5050058601987988129

@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Cysharp.Threading.Tasks;
+using System;
+using TestApp.Data;
+using TestApp.Managers;
 using TestApp.Network;
 using TMPro;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
-using UniRx;
-using Cysharp.Threading.Tasks;
-using System.Threading;
-using TestApp.Data;
-using TestApp.Managers;
 
 namespace TestApp.UI.Pages
 {
@@ -22,13 +21,12 @@ namespace TestApp.UI.Pages
 
         private const double TIMER_INTERVALS = 5d;
 
-        private ICommandSender _commandSender;
+        private IRequestSender _commandSender;
 
-        private CancellationTokenSource _cts;
         private IDisposable _getDataSub;
 
         [Inject]
-        private void Inject(ICommandSender commandSender)
+        private void Inject(IRequestSender commandSender)
         {
             _commandSender = commandSender;
         }
@@ -44,8 +42,6 @@ namespace TestApp.UI.Pages
         {
             _getDataSub?.Dispose();
             _getDataSub = null;
-
-            DisposeCancellationToken();
 
             _commandSender.CancellWeatherDataRequest();
         }
@@ -71,12 +67,9 @@ namespace TestApp.UI.Pages
 
             try
             {
-                if (_cts == null)
-                    CreateNewCancellationToken();
+                var weatherData = await _commandSender.GetWeatherData();
 
-                var weatherData = await _commandSender.GetWeatherData(_cts.Token);
-
-                //ShowResults(weatherData);
+                ShowResults(weatherData);
             }
             catch (OperationCanceledException ex)
             {
@@ -84,28 +77,18 @@ namespace TestApp.UI.Pages
             }
         }
 
-        private void ShowResults(WeatherData weatherData)
+        private void ShowResults(WeatherServerData weatherServerData)
         {
+            if (weatherServerData.Properties.Periods == null || weatherServerData.Properties.Periods.Length == 0)
+                return;
+
             _weatherLoaderContainer.SetActive(false);
             _weatherDataContainer.SetActive(true);
 
-            _weatherImage.LoadImageFromURL(weatherData.WeatherIconPath).Forget();
-            _weatherText.text = $"Сегодня - {weatherData.Temperature}{weatherData.WeatherUnit}";
-        }
+            var recentData = weatherServerData.Properties.Periods[0];
 
-        private void CreateNewCancellationToken()
-        {
-            _cts = new CancellationTokenSource();
-        }
-
-        private void DisposeCancellationToken()
-        {
-            if (_cts != null)
-            {
-                _cts.Cancel();
-                _cts.Dispose();
-                _cts = null;
-            }
+            _weatherImage.LoadImageFromURL(recentData.Icon).Forget();
+            _weatherText.text = $"Сегодня - {recentData.Temperature}{recentData.TemperatureUnit}";
         }
     }
 }

@@ -1,31 +1,42 @@
 ﻿using Cysharp.Threading.Tasks;
-using Newtonsoft.Json;
+using System;
+using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Network.Commands
+namespace TestApp.Network.Requests
 {
-    public abstract class AbstractBaseCommand
+    public abstract class AbstractBaseRequest
     {
         protected UnityWebRequest _request;
+        protected Action<(bool, string)> _onRequestEnd;
 
         protected bool _isAborted = false;
 
-        public AbstractBaseCommand()
+        protected virtual int Timeout => 3;
+
+        public AbstractBaseRequest()
         {
             SetupRequest();
+
+            if (_request != null)
+                _request.timeout = Timeout;
         }
 
         protected abstract void SetupRequest();
 
-        public async UniTask<(bool, string)> SendRequest()
+        public void SetOnRequestEnd(Action<(bool success, string data)> onRequestEnd)
+        {
+            _onRequestEnd = onRequestEnd;
+        }
+
+        public async UniTask SendRequest()
         {
             await _request.SendWebRequest();
 
             if (_isAborted || _request.result != UnityWebRequest.Result.Success)
-                return (false, null);
-
-            return (true, _request.downloadHandler.text);
-            //return (true, JsonConvert.DeserializeObject<T>(_request.downloadHandler.text));
+                _onRequestEnd?.Invoke((false, null));
+            else
+                _onRequestEnd?.Invoke((true, _request.downloadHandler.text));
         }
 
         public void Cancell()

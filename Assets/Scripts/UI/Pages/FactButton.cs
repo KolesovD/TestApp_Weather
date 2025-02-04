@@ -1,8 +1,6 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System;
 using TestApp.Data;
-using TestApp.Network;
 using TestApp.UI.Elements;
-using TestApp.UI.Window;
 using TMPro;
 using UnityEngine;
 using Zenject;
@@ -18,44 +16,44 @@ namespace TestApp.UI.Pages
 
         private int _factNumber;
         private FactData _factData;
+        private Action<string, FactButton> _onButtonClick;
 
-        private ICommandSender _commandSender;
-        private PopupWindow _popupWindow;
+        //private IRequestSender _commandSender;
 
-        [Inject]
-        private void Inject(ICommandSender commandSender, PopupWindow popupWindow)
-        {
-            _commandSender = commandSender;
-            _popupWindow = popupWindow;
-        }
+        //[Inject]
+        //private void Inject(IRequestSender commandSender)
+        //{
+        //    _commandSender = commandSender;
+        //}
 
-        public void Init(int factNumber, FactData factData)
+        public void Init(int factNumber, FactData factData, Action<string, FactButton> onButtonClick)
         {
             _factNumber = factNumber;
             _factData = factData;
+            _onButtonClick = onButtonClick;
 
             _factNumberText.text = _factNumber.ToString();
             _factName.text = _factData.Name;
 
-            _loaderImage.SetActive(false);
+            TurnLoader(false);
 
-            _buttonSelf.SetOnClick(() => OnButtonClick().Forget());
+            _buttonSelf.SetOnClick(() => OnButtonClick());
         }
 
-        private async UniTask OnButtonClick()
+        private void OnButtonClick()
         {
-            _loaderImage.SetActive(true);
+            _onButtonClick?.Invoke(_factData.Id, this);
+        }
 
-            FactData factData = await _commandSender.GetOneFactData(_factData.Id, default);
-
-            _loaderImage.SetActive(false);
-
-            _popupWindow.Open(factData.Name, factData.Description);
+        public void TurnLoader(bool value)
+        {
+            _loaderImage.SetActive(value);
         }
 
         public void Dispose()
         {
             _buttonSelf.Dispose();
+            TurnLoader(false);
         }
 
         public class Factory : PlaceholderFactory<FactButton, Transform, FactButton>

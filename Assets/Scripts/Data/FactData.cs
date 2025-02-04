@@ -37,12 +37,5 @@ namespace TestApp.Data
                 return string.Empty;
             }
         }
-
-        public FactData(string id, string type, Dictionary<string, object> attributes)
-        {
-            Id = id;
-            Type = type;
-            Attributes = attributes;
-        }
     }
 }

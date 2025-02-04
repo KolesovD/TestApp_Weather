@@ -22,5 +22,8 @@ namespace TestApp.Utils
             i.color = i.color.Set(r, g, b, a);
             return i;
         }
+
+        public static Vector2 Set(this Vector2 v, float? x = null, float? y = null) =>
+            new Vector2(x ?? v.x, y ?? v.y);
     }
 }

@@ -1,10 +1,10 @@
 ﻿using TestApp.Managers;
 using TestApp.Network;
-using Zenject;
-using UnityEngine;
 using TestApp.UI;
-using TestApp.UI.Window;
 using TestApp.UI.Pages;
+using TestApp.UI.Window;
+using UnityEngine;
+using Zenject;
 
 namespace TestApp.Installers
 {
@@ -19,7 +19,7 @@ namespace TestApp.Installers
 
             Container.Bind<Sound2DManager>().FromNewComponentOnNewGameObject().WithGameObjectName("Sound2D").AsSingle();
 
-            Container.Bind<ICommandSender>().To<FakeCommandSender>().FromNew().AsSingle();
+            Container.Bind<IRequestSender>().To<RequestSender>().FromNew().AsSingle();
         }
 
         private void InstallHUD()
